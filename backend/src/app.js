@@ -1,22 +1,26 @@
-const express = require('express')
-const cors = require('cors')
+import express from "express";
+import cors from "cors";
 
-require("dotenv").config();
+import "dotenv/config";
 
-const app = express()
+import authRoutes from "./routes/authRoutes.js";
 
-// middleware  
-app.use(express.urlencoded({extended: true}))
-app.use(express.json())
-app.use(cors())
+const app = express();
+
+// middleware
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cors());
 
 // routes
-app.get('/api/health', (req, res) =>{
-    res.send('server ok')
-})
+app.get("/api/health", (req, res) => {
+  res.send("server ok");
+});
+
+app.use("/api/auth", authRoutes);
 
 // start server
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server berjalan di http://localhost:${PORT}`)
-})
+  console.log(`Server berjalan di http://localhost:${PORT}`);
+});
