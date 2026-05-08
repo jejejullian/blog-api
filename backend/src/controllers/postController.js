@@ -1,28 +1,63 @@
 import prisma from "../lib/prisma.js";
+import jwt from "jsonwebtoken";
 
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await prisma.post.findMany({ where: { published: true } });
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    let showUnpublished = false;
+
+    if (token) {
+      try {
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+        if (user && user.isAuthor) {
+          showUnpublished = true;
+        }
+      } catch (err) {
+        // Token tidak valid, abaikan
+      }
+    }
+
+    const posts = await prisma.post.findMany({ 
+      where: showUnpublished ? {} : { published: true },
+      orderBy: { createdAt: 'desc' }
+    });
 
     res.json(posts);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Gagal mengambil daftar post" });
+    res.status(500).json({ error: "Sistem gagal mengambil daftar post dari database" });
   }
 };
 
 const getPostById = async (req, res) => {
   const id = parseInt(req.params.id);
   try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    let showUnpublished = false;
+
+    if (token) {
+      try {
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+        if (user && user.isAuthor) {
+          showUnpublished = true;
+        }
+      } catch (err) {
+        // Token tidak valid
+      }
+    }
+
     const post = await prisma.post.findUnique({
-      where: { id, published: true },
+      where: showUnpublished ? { id } : { id, published: true },
     });
+    
     if (!post) return res.status(404).json({ error: "Post tidak ditemukan" });
 
     res.json(post);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Gagal mengambil post" });
+    res.status(500).json({ error: "Terjadi kesalahan saat mengambil detail post" });
   }
 };
 
@@ -41,7 +76,7 @@ const createPost = async (req, res) => {
     res.json(post);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Gagal membuat post baru" });
+    res.status(500).json({ error: "Database gagal menyimpan post baru Anda" });
   }
 };
 
@@ -59,7 +94,7 @@ const updatePost = async (req, res) => {
     res.json(post);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Gagal mengupdate post" });
+    res.status(500).json({ error: "Sistem gagal memperbarui data post tersebut" });
   }
 };
 
@@ -72,7 +107,7 @@ const deletePost = async (req, res) => {
     res.json({ message: "post berhasil dihapus" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Gagal menghapus post" });
+    res.status(500).json({ error: "Gagal menghapus post. Data mungkin sudah terhapus sebelumnya" });
   }
 };
 
@@ -95,7 +130,7 @@ const togglePublish = async (req, res) => {
     res.json(updated);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "gagal mengubah status publish" });
+    res.status(500).json({ error: "Gagal mengubah status publikasi (Publish/Unpublish)" });
   }
 };
 
