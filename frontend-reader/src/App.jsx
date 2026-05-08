@@ -13,7 +13,7 @@ function App() {
     // Simulate initial system loading
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2500); // Show loading screen for 2.5 seconds
+    }, 2500);
     return () => clearTimeout(timer);
   }, []);
 

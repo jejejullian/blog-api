@@ -9,7 +9,7 @@ const Footer = () => {
 
       <div className="max-w-5xl mx-auto unskew-text w-full relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 md:gap-4 mb-10">
-          
+
           {/* Brand & Status */}
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
@@ -25,7 +25,7 @@ const Footer = () => {
                 </span>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2 mt-2">
               <span className="w-2 h-2 shrink-0 bg-primary rounded-full animate-pulse shadow-[0_0_8px_#D2FF00]"></span>
               <span className="text-xs font-bold text-primary tracking-widest uppercase text-shadow-neon">System Operational</span>
@@ -84,7 +84,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Decorative corner */}
       <div className="absolute bottom-0 right-0 w-24 h-24 bg-[repeating-linear-gradient(45deg,#2A2A2A,#2A2A2A_5px,transparent_5px,transparent_10px)] transform rotate-45 translate-x-12 translate-y-12 opacity-30 pointer-events-none"></div>
     </footer>
