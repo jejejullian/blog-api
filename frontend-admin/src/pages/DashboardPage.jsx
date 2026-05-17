@@ -8,23 +8,24 @@ const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true);
-        setError(""); 
-        const data = await getAllPostsAdmin();
-        setPosts(data);
-      } catch (err) {
-        setError(err.response?.data?.error || "Failed to fetch posts.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // FIX: fetchPosts dipindah ke scope komponen agar bisa dipanggil dari tombol Retry
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const data = await getAllPostsAdmin();
+      setPosts(data);
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to fetch posts.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchPosts();
-  }, []); 
+  }, []);
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this post? This action is irreversible.")) {
