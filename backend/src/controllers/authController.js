@@ -8,7 +8,7 @@ const register = async (req, res) => {
     const existing = await prisma.user.findUnique({ where: { email } });
 
     if (existing) {
-      return res.json({ error: "Email sudah digunakan" });
+      return res.status(400).json({ error: "Email sudah digunakan" });
     }
     const hashed = await bcrypt.hash(password, 10);
     await prisma.user.create({ data: { email, username, password: hashed } });
@@ -24,7 +24,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     const existing = await prisma.user.findUnique({ where: { email } });
     if (!existing) {
-      return res.json({ error: "user tidak ditemukan" });
+      return res.status(401).json({ error: "user tidak ditemukan" });
     }
 
     const isMatch = await bcrypt.compare(password, existing.password);
@@ -32,7 +32,7 @@ const login = async (req, res) => {
       const token = jwt.sign({ id: existing.id, isAuthor: existing.isAuthor }, process.env.JWT_SECRET, { expiresIn: "7d" });
       res.json({ token });
     } else {
-      res.json({ error: "incorrect password" });
+      res.status(401).json({ error: "incorrect password" });
     }
   } catch (err) {
     console.error(err);
