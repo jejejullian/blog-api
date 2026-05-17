@@ -6,7 +6,8 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    // FIX: key diubah dari 'token' ke 'adminToken' agar sesuai dengan AuthContext.jsx
+    const token = localStorage.getItem('adminToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -23,7 +24,7 @@ export const loginUser = async (email, password) => {
 };
 
 export const getAllPostsAdmin = async () => {
-  const response = await api.get('/posts'); 
+  const response = await api.get('/posts');
   return response.data;
 };
 
